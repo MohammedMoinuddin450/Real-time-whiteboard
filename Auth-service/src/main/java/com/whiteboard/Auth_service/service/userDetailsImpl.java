@@ -22,13 +22,14 @@ public class userDetailsImpl implements UserDetails {
     private String name;
     private String email;
     private String password;
-//    private Roles role;
+    private Roles role;
 
     public static userDetailsImpl build(User user){
         return new userDetailsImpl(user.getUserId(),
                 user.getUsername(),
                 user.getEmail(),
-                user.getPassword());
+                user.getPassword(),
+                user.getRole());
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

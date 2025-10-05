@@ -1,5 +1,6 @@
 package com.whiteboard.Auth_service.config;
 
+import com.whiteboard.Auth_service.model.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -18,10 +19,12 @@ public class jwtutil {
     @Value("${jwt.expiration}")
     private int jwtExpirationMs;
 
-    public String generateToken(String email) {
+    public String generateToken(User user) {
 
         return Jwts.builder()
-                .subject(email)
+                .subject(user.getEmail())
+                .claim("role", user.getRole().name())
+                .claim("userId", user.getUserId())
                 .issuedAt(new Date())
                 .expiration(new Date((new Date().getTime() + jwtExpirationMs)))
                 .signWith(key())

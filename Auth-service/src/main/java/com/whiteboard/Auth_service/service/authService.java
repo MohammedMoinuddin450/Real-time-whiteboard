@@ -1,6 +1,7 @@
 package com.whiteboard.Auth_service.service;
 
 import com.whiteboard.Auth_service.model.Dtos.TokenResponse;
+import com.whiteboard.Auth_service.model.Roles;
 import com.whiteboard.Auth_service.model.Token;
 import com.whiteboard.Auth_service.model.User;
 import com.whiteboard.Auth_service.repo.tokenRepo;
@@ -42,8 +43,6 @@ public class authService {
     private jwtutil util;
     @Autowired
     private RestTemplate restTemplate;
-    @Autowired
-    private userDetailsServiceImpl userdetailsservice;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -97,6 +96,7 @@ public class authService {
                         newUser.setEmail(email);
                         newUser.setUsername(name);
                         newUser.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
+                        newUser.setRole(Roles.valueOf("USER"));
                         return urepo.save(newUser);
                         });
 
@@ -111,7 +111,7 @@ public class authService {
                 tRepo.save(refreshTokenEntity);
             }
 
-            String jwtToken = util.generateToken(email);
+            String jwtToken = util.generateToken(user);
             return new TokenResponse(jwtToken,refreshToken);
 
         } catch (Exception e) {
@@ -131,7 +131,7 @@ public class authService {
         }
         User user = token.getUser();
 
-        String newAccessToken = util.generateToken(user.getEmail());
+        String newAccessToken = util.generateToken(user);
 
         String newRefreshToken = util.generateRefreshToken(user.getEmail());
         token.setRefreshToken(newRefreshToken);
